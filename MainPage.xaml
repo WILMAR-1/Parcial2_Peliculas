@@ -14,13 +14,14 @@
 
         <!-- Header -->
         <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="0,10,0,5">
-            <Label Text="CineApp"
+            <Label Text="WilMovi"
                    FontSize="34"
                    FontFamily="Minecraft"
                    TextColor="#e94560"
                    HorizontalOptions="Center"/>
-            <Label Text="Populares ahora - busca lo que quieras"
+            <Label Text="2024-0103"
                    FontSize="14"
+                   FontFamily="Minecraft"
                    TextColor="#8d8d9b"
                    HorizontalOptions="Center"/>
         </VerticalStackLayout>

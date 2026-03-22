@@ -28,7 +28,7 @@
 		<MauiXamlInflator>SourceGen</MauiXamlInflator>
 
 		<!-- Display name -->
-		<ApplicationTitle>Parcial2_Peliculas</ApplicationTitle>
+		<ApplicationTitle>WilMovi</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.parcial2_peliculas</ApplicationId>

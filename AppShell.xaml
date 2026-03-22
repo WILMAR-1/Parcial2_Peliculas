@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Parcial2_Peliculas"
     xmlns:views="clr-namespace:Parcial2_Peliculas.Views"
-    Title="CineApp"
+    Title="WilMovi"
     Shell.BackgroundColor="#1a1a2e"
     Shell.ForegroundColor="#e94560"
     Shell.TitleColor="#e94560"
