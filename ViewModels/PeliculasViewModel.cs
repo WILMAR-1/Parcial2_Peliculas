@@ -15,6 +15,7 @@ namespace Parcial2_Peliculas.ViewModels
         private readonly HttpClient httpClient;
         private static readonly string API_KEY = AppConfig.Get("TmdbApiKey");
         private const string BASE_URL = "https://api.themoviedb.org/3/search/movie";
+        private const string POPULAR_URL = "https://api.themoviedb.org/3/movie/popular";
 
         // Colecciones
         public ObservableCollection<Movie> Peliculas { get; set; }
@@ -67,6 +68,34 @@ namespace Parcial2_Peliculas.ViewModels
             httpClient = new HttpClient();
             Peliculas = new ObservableCollection<Movie>();
             BuscarCommand = new RelayCommand(async () => await BuscarPeliculas());
+            _ = CargarPopulares();
+        }
+
+        private async Task CargarPopulares()
+        {
+            EstaBuscando = true;
+
+            try
+            {
+                string url = $"{POPULAR_URL}?api_key={API_KEY}&language=es-ES&page=1";
+                var response = await httpClient.GetFromJsonAsync<MovieSearchResponse>(url);
+
+                if (response?.Results != null)
+                {
+                    foreach (var pelicula in response.Results)
+                    {
+                        Peliculas.Add(pelicula);
+                    }
+                }
+            }
+            catch
+            {
+                // Silencioso al inicio, no molestar al usuario
+            }
+            finally
+            {
+                EstaBuscando = false;
+            }
         }
 
         private async Task BuscarPeliculas()

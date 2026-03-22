@@ -19,7 +19,7 @@
                    FontAttributes="Bold"
                    TextColor="#e94560"
                    HorizontalOptions="Center"/>
-            <Label Text="Descubre tu proxima pelicula favorita"
+            <Label Text="Populares ahora - busca lo que quieras"
                    FontSize="14"
                    TextColor="#8d8d9b"
                    HorizontalOptions="Center"/>
