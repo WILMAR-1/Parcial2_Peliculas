@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Parcial2_Peliculas.Views.BuscadorPage"
+             xmlns:vm="clr-namespace:Parcial2_Peliculas.ViewModels"
+             BackgroundColor="#1a1a2e">
+
+    <ContentPage.BindingContext>
+        <vm:BuscadorViewModel/>
+    </ContentPage.BindingContext>
+
+    <Grid Padding="16" RowDefinitions="Auto,Auto,Auto,Auto,*" RowSpacing="10">
+
+        <!-- Header -->
+        <Label Grid.Row="0"
+               Text="Buscador"
+               FontSize="26"
+               FontFamily="Minecraft"
+               TextColor="#e94560"
+               HorizontalOptions="Center"
+               Padding="0,10,0,0"/>
+
+        <!-- Search -->
+        <Border Grid.Row="1"
+                BackgroundColor="#16213e"
+                StrokeShape="RoundRectangle 16"
+                Stroke="#0f3460"
+                StrokeThickness="1"
+                Padding="16">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <Entry Placeholder="Buscar peliculas..."
+                       PlaceholderColor="#5c5c7a"
+                       Text="{Binding TextoBusqueda, Mode=TwoWay}"
+                       TextColor="White"
+                       FontSize="16"
+                       BackgroundColor="Transparent"/>
+
+                <Button Grid.Column="1"
+                        Text="Buscar"
+                        Command="{Binding BuscarCommand}"
+                        BackgroundColor="#e94560"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        CornerRadius="12"
+                        Padding="20,0"
+                        HeightRequest="44"/>
+            </Grid>
+        </Border>
+
+        <!-- Filtros -->
+        <ScrollView Grid.Row="2" Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+            <HorizontalStackLayout Spacing="8" Padding="0,4">
+                <Button Text="Accion" Command="{Binding FiltrarCommand}" CommandParameter="28"
+                        BackgroundColor="#0f3460" TextColor="White" CornerRadius="14"
+                        FontSize="12" Padding="14,6" HeightRequest="32"/>
+                <Button Text="Comedia" Command="{Binding FiltrarCommand}" CommandParameter="35"
+                        BackgroundColor="#0f3460" TextColor="White" CornerRadius="14"
+                        FontSize="12" Padding="14,6" HeightRequest="32"/>
+                <Button Text="Terror" Command="{Binding FiltrarCommand}" CommandParameter="27"
+                        BackgroundColor="#0f3460" TextColor="White" CornerRadius="14"
+                        FontSize="12" Padding="14,6" HeightRequest="32"/>
+                <Button Text="Romance" Command="{Binding FiltrarCommand}" CommandParameter="10749"
+                        BackgroundColor="#0f3460" TextColor="White" CornerRadius="14"
+                        FontSize="12" Padding="14,6" HeightRequest="32"/>
+                <Button Text="Ciencia Ficcion" Command="{Binding FiltrarCommand}" CommandParameter="878"
+                        BackgroundColor="#0f3460" TextColor="White" CornerRadius="14"
+                        FontSize="12" Padding="14,6" HeightRequest="32"/>
+                <Button Text="Animacion" Command="{Binding FiltrarCommand}" CommandParameter="16"
+                        BackgroundColor="#0f3460" TextColor="White" CornerRadius="14"
+                        FontSize="12" Padding="14,6" HeightRequest="32"/>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- Loading -->
+        <ActivityIndicator Grid.Row="3"
+                           IsRunning="{Binding EstaBuscando}"
+                           IsVisible="{Binding EstaBuscando}"
+                           Color="#e94560"
+                           HeightRequest="30"/>
+
+        <!-- Results -->
+        <CollectionView Grid.Row="4"
+                        ItemsSource="{Binding Peliculas}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding PeliculaSeleccionada}">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="0,6"
+                            BackgroundColor="#16213e"
+                            StrokeShape="RoundRectangle 14"
+                            Stroke="#0f3460"
+                            StrokeThickness="0.5"
+                            Padding="12">
+                        <Grid ColumnDefinitions="90,*" ColumnSpacing="14">
+                            <Border Grid.Column="0"
+                                    StrokeShape="RoundRectangle 10"
+                                    StrokeThickness="0"
+                                    HeightRequest="135"
+                                    WidthRequest="90">
+                                <Image Source="{Binding PosterUrl}" Aspect="AspectFill"/>
+                            </Border>
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                <Label Text="{Binding Title}" FontSize="17" FontAttributes="Bold"
+                                       TextColor="White" LineBreakMode="TailTruncation" MaxLines="2"/>
+                                <Label Text="{Binding ReleaseDate, StringFormat='Estreno: {0}'}"
+                                       FontSize="13" TextColor="#8d8d9b"/>
+                                <HorizontalStackLayout Spacing="6">
+                                    <Border BackgroundColor="#e94560" StrokeShape="RoundRectangle 8"
+                                            StrokeThickness="0" Padding="8,4" HeightRequest="28">
+                                        <Label Text="{Binding VoteAverage, StringFormat='{0:F1}/10'}"
+                                               FontSize="12" TextColor="White" FontAttributes="Bold"
+                                               VerticalOptions="Center"/>
+                                    </Border>
+                                </HorizontalStackLayout>
+                                <Label Text="{Binding Overview}" FontSize="12" TextColor="#6b6b80"
+                                       LineBreakMode="TailTruncation" MaxLines="2"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="30" Spacing="12" VerticalOptions="Center">
+                    <Label Text="Usa los filtros o busca por nombre"
+                           FontSize="16" HorizontalOptions="Center" TextColor="#5c5c7a"/>
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+        </CollectionView>
+
+    </Grid>
+</ContentPage>

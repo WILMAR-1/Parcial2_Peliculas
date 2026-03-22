@@ -8,43 +8,31 @@ using Parcial2_Peliculas.Models;
 
 namespace Parcial2_Peliculas.ViewModels
 {
-    public class PeliculasViewModel : INotifyPropertyChanged
+    public class BuscadorViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly HttpClient httpClient;
         private static readonly string API_KEY = AppConfig.Get("TmdbApiKey");
-        private const string BASE_URL = "https://api.themoviedb.org/3/search/movie";
-        private const string POPULAR_URL = "https://api.themoviedb.org/3/movie/popular";
+        private const string SEARCH_URL = "https://api.themoviedb.org/3/search/movie";
+        private const string DISCOVER_URL = "https://api.themoviedb.org/3/discover/movie";
 
-        // Colecciones
         public ObservableCollection<Movie> Peliculas { get; set; }
 
-        // Texto de busqueda
         private string textoBusqueda;
         public string TextoBusqueda
         {
             get => textoBusqueda;
-            set
-            {
-                textoBusqueda = value;
-                OnPropertyChanged();
-            }
+            set { textoBusqueda = value; OnPropertyChanged(); }
         }
 
-        // Indicador de carga
         private bool estaBuscando;
         public bool EstaBuscando
         {
             get => estaBuscando;
-            set
-            {
-                estaBuscando = value;
-                OnPropertyChanged();
-            }
+            set { estaBuscando = value; OnPropertyChanged(); }
         }
 
-        // Pelicula seleccionada
         private Movie peliculaSeleccionada;
         public Movie PeliculaSeleccionada
         {
@@ -53,59 +41,26 @@ namespace Parcial2_Peliculas.ViewModels
             {
                 peliculaSeleccionada = value;
                 OnPropertyChanged();
-                if (value != null)
-                {
-                    MostrarDetalles(value);
-                }
+                if (value != null) MostrarDetalles(value);
             }
         }
 
-        // Commands
         public ICommand BuscarCommand { get; set; }
+        public ICommand FiltrarCommand { get; set; }
 
-        public PeliculasViewModel()
+        public BuscadorViewModel()
         {
             httpClient = new HttpClient();
             Peliculas = new ObservableCollection<Movie>();
             BuscarCommand = new RelayCommand(async () => await BuscarPeliculas());
-            _ = CargarPopulares();
-        }
-
-        private async Task CargarPopulares()
-        {
-            EstaBuscando = true;
-
-            try
-            {
-                string url = $"{POPULAR_URL}?api_key={API_KEY}&language=es-ES&page=1";
-                var response = await httpClient.GetFromJsonAsync<MovieSearchResponse>(url);
-
-                if (response?.Results != null)
-                {
-                    foreach (var pelicula in response.Results)
-                    {
-                        Peliculas.Add(pelicula);
-                    }
-                }
-            }
-            catch
-            {
-                // Silencioso al inicio, no molestar al usuario
-            }
-            finally
-            {
-                EstaBuscando = false;
-            }
+            FiltrarCommand = new RelayCommand<string>(async (genreId) => await FiltrarPorGenero(genreId));
         }
 
         private async Task BuscarPeliculas()
         {
             if (string.IsNullOrWhiteSpace(TextoBusqueda))
             {
-                await Application.Current.MainPage.DisplayAlert(
-                    "Error",
-                    "Ingresa el nombre de una pelicula",
-                    "OK");
+                await Application.Current.MainPage.DisplayAlert("Error", "Ingresa el nombre de una pelicula", "OK");
                 return;
             }
 
@@ -114,38 +69,52 @@ namespace Parcial2_Peliculas.ViewModels
 
             try
             {
-                string url = $"{BASE_URL}?api_key={API_KEY}&query={TextoBusqueda}&language=es-ES";
-
+                string url = $"{SEARCH_URL}?api_key={API_KEY}&query={TextoBusqueda}&language=es-ES";
                 var response = await httpClient.GetFromJsonAsync<MovieSearchResponse>(url);
 
                 if (response?.Results != null && response.Results.Count > 0)
                 {
                     foreach (var pelicula in response.Results)
-                    {
                         Peliculas.Add(pelicula);
-                    }
                 }
                 else
                 {
-                    await Application.Current.MainPage.DisplayAlert(
-                        "Sin Resultados",
-                        "No se encontraron peliculas con ese nombre",
-                        "OK");
+                    await Application.Current.MainPage.DisplayAlert("Sin Resultados", "No se encontraron peliculas", "OK");
                 }
             }
             catch (HttpRequestException ex)
             {
-                await Application.Current.MainPage.DisplayAlert(
-                    "Error de Red",
-                    $"No se pudo conectar a la API: {ex.Message}",
-                    "OK");
+                await Application.Current.MainPage.DisplayAlert("Error de Red", $"No se pudo conectar: {ex.Message}", "OK");
             }
             catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert(
-                    "Error",
-                    $"Ocurrio un error: {ex.Message}",
-                    "OK");
+                await Application.Current.MainPage.DisplayAlert("Error", $"Ocurrio un error: {ex.Message}", "OK");
+            }
+            finally
+            {
+                EstaBuscando = false;
+            }
+        }
+
+        private async Task FiltrarPorGenero(string genreId)
+        {
+            EstaBuscando = true;
+            Peliculas.Clear();
+
+            try
+            {
+                string url = $"{DISCOVER_URL}?api_key={API_KEY}&with_genres={genreId}&language=es-ES&sort_by=popularity.desc";
+                var response = await httpClient.GetFromJsonAsync<MovieSearchResponse>(url);
+
+                if (response?.Results != null)
+                {
+                    foreach (var pelicula in response.Results)
+                        Peliculas.Add(pelicula);
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", $"Ocurrio un error: {ex.Message}", "OK");
             }
             finally
             {
@@ -156,7 +125,11 @@ namespace Parcial2_Peliculas.ViewModels
         private async void MostrarDetalles(Movie pelicula)
         {
             var action = await Application.Current.MainPage.DisplayActionSheet(
-                pelicula.Title, "Cerrar", null, "Ver detalles", "Agregar a favoritos");
+                pelicula.Title,
+                "Cerrar",
+                null,
+                "Ver detalles",
+                "Agregar a favoritos");
 
             if (action == "Ver detalles")
             {
@@ -168,7 +141,9 @@ namespace Parcial2_Peliculas.ViewModels
             else if (action == "Agregar a favoritos")
             {
                 if (FavoritosService.EsFavorito(pelicula.Id))
+                {
                     await Application.Current.MainPage.DisplayAlert("Info", "Ya esta en tus favoritos", "OK");
+                }
                 else
                 {
                     FavoritosService.Agregar(pelicula);
