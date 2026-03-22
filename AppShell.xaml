@@ -4,7 +4,12 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Parcial2_Peliculas"
-    Title="Parcial2_Peliculas">
+    Title="CineApp"
+    Shell.BackgroundColor="#1a1a2e"
+    Shell.ForegroundColor="#e94560"
+    Shell.TitleColor="#e94560"
+    Shell.UnselectedColor="#5c5c7a"
+    Shell.NavBarIsVisible="False">
 
     <ShellContent
         Title="Home"

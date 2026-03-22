@@ -15,8 +15,8 @@
         <!-- Header -->
         <VerticalStackLayout Grid.Row="0" Spacing="4" Padding="0,10,0,5">
             <Label Text="CineApp"
-                   FontSize="32"
-                   FontAttributes="Bold"
+                   FontSize="34"
+                   FontFamily="Minecraft"
                    TextColor="#e94560"
                    HorizontalOptions="Center"/>
             <Label Text="Populares ahora - busca lo que quieras"
